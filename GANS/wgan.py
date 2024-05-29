@@ -204,5 +204,27 @@ def train(g_model, c_model, gan_model, dataset, latent_dim, label, n_epochs=75, 
     # evaluate the model performance every 'epoch'
     if (i+1) % bat_per_epo == 0:
       summarize_performances(i, g_model, latent_dim)
-  plot_history(c1_hist, c2_hist, g_hist)
 
+# X,y = generate_fake_samples(generator, latent_dim, 1200)
+X_all = []
+
+numbers = np.arange(10)
+
+# Repeat each number 1000 times
+y_all = np.repeat(numbers, 1000)
+
+for i in range(10):
+  latent_dim = 50
+  # create the critic
+  critic = define_critic()
+  # create the generator
+  generator = define_generator(latent_dim)
+  # create the gan
+  gan_model = define_gan(generator, critic)
+  dataset = load_real_samples(i)
+  train(generator, critic, gan_model, dataset, latent_dim, i)
+  X,y = generate_fake_samples(generator, latent_dim, 1000)
+  X_all.append(X)
+
+np.savez("WGAN_dataset.npz", data=X_all, labels=y_all)
+  
