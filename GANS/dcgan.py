@@ -219,4 +219,34 @@ def generate_dataset(gen_model):
    np.savez("DCGAN_dataset.npz", images=gen_imgs, labels=labels)
    return
 
+# Load digit data
+(X_train, y_train), (_, _) = keras.datasets.mnist.load_data()
+# Print shapes
+print("Shape of X_train: ", X_train.shape)
+print("Shape of y_train: ", y_train.shape)
+
+# Scale and reshape as required by the model
+data = X_train.copy()
+data = data.reshape(X_train.shape[0], 28, 28, 1)
+data = (data - 127.5) / 127.5  # Normalize the images to [-1, 1]
+print("Shape of the scaled array: ", data.shape)
+
+# Instantiate
+latent_dim=100 # Our latent space has 100 dimensions. We can change it to any number
+gen_model = generator(latent_dim)
+# Show model summary and plot model diagram
+gen_model.summary()
+
+# Instantiate
+dis_model = discriminator()
+# Show model summary and plot model diagram
+dis_model.summary()
+
+# Instantiate
+gan_model = def_gan(gen_model, dis_model)
+# Show model summary and plot model diagram
+gan_model.summary()
+
+train(gen_model, dis_model, gan_model, data, y_train, latent_dim)
+generate_dataset(gen_model)
 
